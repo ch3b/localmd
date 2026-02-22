@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "outDir": "app",
+    "rootDir": "src"
+  },
+  "include": ["src/renderer/**/*.ts", "src/shared/**/*.ts", "src/types/**/*.d.ts"]
+}

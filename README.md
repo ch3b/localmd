@@ -20,7 +20,23 @@ localmd is a desktop Markdown reader/editor built with Electron.
 
 ## Screenshots
 
-See `docs/SCREENSHOTS.md` for capture instructions and suggested shots.
+### Start Screen (Light)
+
+![localmd start screen light](docs/screenshots/start-screen-light.png)
+
+### Reader Screen (Light)
+
+![localmd reader screen light](docs/screenshots/reader-screen-light.png)
+
+### Start Screen (Dark)
+
+![localmd start screen dark](docs/screenshots/start-screen-dark.png)
+
+### Reader Screen (Dark)
+
+![localmd reader screen dark](docs/screenshots/reader-screen-dark.png)
+
+See `docs/SCREENSHOTS.md` for capture guidance.
 
 ## Run locally
 
