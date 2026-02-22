@@ -27,6 +27,7 @@ interface AppState {
   isEditing: boolean;
   isDirty: boolean;
   theme: 'light' | 'dark';
+  themePreference: 'system' | 'light' | 'dark';
 }
 
 const state: AppState = {
@@ -38,8 +39,11 @@ const state: AppState = {
   currentMarkdown: '',
   isEditing: false,
   isDirty: false,
-  theme: 'light'
+  theme: 'light',
+  themePreference: 'system'
 };
+
+const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 const iconAttrs = {
   width: 16,
@@ -82,13 +86,19 @@ function renderStaticIcons(): void {
 function applyTheme(theme: 'light' | 'dark'): void {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
-  window.localStorage.setItem('localmd-theme', theme);
 
   themeButtons.forEach((button) => {
     button.dataset.theme = theme;
     button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-    button.setAttribute('title', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-    button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    const modeHint = state.themePreference === 'system' ? ' (system)' : '';
+    button.setAttribute(
+      'title',
+      `${theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}${modeHint}. Right-click to follow system.`
+    );
+    button.setAttribute(
+      'aria-label',
+      `${theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}${modeHint}`
+    );
     button.innerHTML = `
       <span class="theme-glyph theme-glyph-left" aria-hidden="true">${window.localmd.icon('sun', iconAttrs)}</span>
       <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
@@ -97,20 +107,34 @@ function applyTheme(theme: 'light' | 'dark'): void {
   });
 }
 
+function resolveThemeFromPreference(preference: 'system' | 'light' | 'dark'): 'light' | 'dark' {
+  if (preference === 'system') {
+    return systemThemeQuery.matches ? 'dark' : 'light';
+  }
+  return preference;
+}
+
+function setThemePreference(preference: 'system' | 'light' | 'dark'): void {
+  state.themePreference = preference;
+  window.localStorage.setItem('localmd-theme-preference', preference);
+  applyTheme(resolveThemeFromPreference(preference));
+}
+
 function initializeTheme(): void {
-  const storedTheme = window.localStorage.getItem('localmd-theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initialTheme: 'light' | 'dark' =
-    storedTheme === 'light' || storedTheme === 'dark'
-      ? storedTheme
-      : prefersDark
-        ? 'dark'
-        : 'light';
-  applyTheme(initialTheme);
+  const storedPreference = window.localStorage.getItem('localmd-theme-preference');
+  const legacyStoredTheme = window.localStorage.getItem('localmd-theme');
+  const initialPreference: 'system' | 'light' | 'dark' =
+    storedPreference === 'system' || storedPreference === 'light' || storedPreference === 'dark'
+      ? storedPreference
+      : legacyStoredTheme === 'light' || legacyStoredTheme === 'dark'
+        ? legacyStoredTheme
+        : 'system';
+
+  setThemePreference(initialPreference);
 }
 
 function toggleTheme(): void {
-  applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+  setThemePreference(state.theme === 'dark' ? 'light' : 'dark');
 }
 
 function renderMarkdown(): void {
@@ -510,6 +534,18 @@ function registerEventHandlers(): void {
   });
 
   themeButtons.forEach((button) => button.addEventListener('click', toggleTheme));
+  themeButtons.forEach((button) =>
+    button.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      setThemePreference('system');
+    })
+  );
+
+  systemThemeQuery.addEventListener('change', () => {
+    if (state.themePreference === 'system') {
+      applyTheme(resolveThemeFromPreference('system'));
+    }
+  });
 
   markdownEditor.addEventListener('input', () => {
     state.currentMarkdown = markdownEditor.value;
