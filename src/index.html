@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>localmd</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="start-view" class="view">
+        <div class="start-card">
+          <div class="start-header">
+            <p class="eyebrow">localmd</p>
+            <button class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme"></button>
+          </div>
+          <h1>Read Markdown files from any folder</h1>
+          <p class="subhead">Choose a root folder to browse markdown files and view them instantly.</p>
+          <button id="open-folder-button" class="primary icon-only-button open-folder-icon" type="button" aria-label="Open folder" title="Open folder">
+            <span class="icon-glyph" data-icon="folder" aria-hidden="true"></span>
+          </button>
+          <div class="recent-area">
+            <h2>Recently Opened</h2>
+            <ul id="recent-folders" class="recent-list"></ul>
+            <p id="recent-empty" class="empty-msg">No recent folders yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="reader-view" class="view hidden">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-actions">
+              <button id="change-folder-button" class="ghost icon-only-button action-icon-button" type="button" aria-label="Open folder" title="Open folder">
+                <span class="icon-glyph" data-icon="folder" aria-hidden="true"></span>
+              </button>
+              <button id="refresh-tree-button" class="ghost icon-only-button action-icon-button" type="button" aria-label="Refresh folder tree" title="Refresh folder tree">
+                <span class="icon-glyph" data-icon="refresh-cw" aria-hidden="true"></span>
+              </button>
+            </div>
+            <p id="current-root" class="current-root"></p>
+          </div>
+          <div id="tree-root" class="tree-root"></div>
+        </aside>
+
+        <section class="content">
+          <div class="content-toolbar">
+            <p id="file-status" class="file-status">No file selected</p>
+            <div class="toolbar-actions">
+              <button id="toggle-editor-button" class="ghost icon-only-button action-icon-button" type="button" disabled aria-label="Edit mode" title="Edit mode">
+                <span class="icon-glyph" data-icon="edit-3" aria-hidden="true"></span>
+              </button>
+              <button id="save-file-button" class="primary hidden" type="button" disabled>
+                <span class="icon-glyph" data-icon="save" aria-hidden="true"></span>
+              </button>
+              <button class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme"></button>
+            </div>
+          </div>
+          <article id="markdown-view" class="markdown-body">
+            <p class="placeholder">Select a markdown file to preview it.</p>
+          </article>
+          <textarea id="markdown-editor" class="markdown-editor hidden" spellcheck="false"></textarea>
+        </section>
+      </section>
+    </main>
+
+    <script src="./renderer.js" type="module"></script>
+  </body>
+</html>
